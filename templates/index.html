@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>利用状況</title>
+    {% load static %}
+    <style>
+        .occupied {
+            background-color: #ffcccc; /* 薄い赤色を設定 */
+        }
+
+        .next_occupied {
+            background-color:cornflowerblue;
+        }
+        .blue-header {
+            background-color: blue; /* ヘッダー全体の背景色を青に設定 */
+            color: white; /* テキストの色を白に設定 */
+            padding: 20px; /* 内側の余白を追加 */
+            text-align: center; /* テキストを中央揃えにする */
+        }
+        table {
+            width: 50%;
+            border-collapse: collapse;
+            margin: 20px auto;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        img {
+            display: block;
+            margin: 20px auto;
+            width: 100%;  /* 表と同じ幅に設定 */
+            height: auto;  /* 画像のアスペクト比を維持 */
+        }
+        .header {
+            text-align: center;
+            margin: 20px;
+            font-size: 24px;
+        }
+
+        .table-container {
+            display: flex;
+            margin: 0 auto;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 20px;
+        }
+
+        .tables {
+            width: 150px;
+            height: 250px;
+            background-color: #6699cc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 48px;
+            border: 1px solid #333;
+            position: relative;
+        }
+
+        .footer {
+            text-align: center;
+            margin: 20px;
+            font-size: 24px;
+        }
+
+        @media (max-width: 768px) {
+    table {
+        width: 90%;
+    }
+
+    th, td {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    .tables {
+        width: 100px;
+        height: 150px;
+        font-size: 24px;
+    }
+
+    .header, .blue-header, .footer {
+        font-size: 15px;
+        padding: 10px;
+    }
+}
+    </style>
+</head>
+<body>
+    <header class="blue-header">
+        <h1>美原総合体育館：卓球室</h1>
+    </header>
+
+    <h1 style="text-align: center;">~ 現在：利用状況 ~</h1>
+
+    <form method="get" action="." style="text-align: center;">
+        <button type="submit">更新</button>
+    </form>
+
+    <!-- 現在の時間帯を表示 -->
+    <p style="text-align: center; font-size: 20px;">
+        {% if current_time_slot %}
+            現在の利用時間帯: {{ current_time_slot }}
+            <!-- currernt_time_slotがNONEになったとき -->
+        {% else %}
+            卓球場は現在営業していません。<br>
+            <a href="http://miharasa.ec-net.jp/" target="_blank">詳しくはこちら</a>
+
+        {% endif %}
+    </p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>卓球台番号</th>
+                <th>利用状況</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for table in tables %}
+            <tr>
+                <td>卓球台 {{ table.number }}</td>
+                <td class="{% if table.is_occupied %}occupied{% endif %}">
+                    {{ table.is_occupied|yesno:"利用中,空き" }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+    <br>
+    <br>
+
+    <h1 style="text-align: center;">~ 次期：待ち状況 ~</h1>
+    <!-- 次の利用時間表示 -->
+    <p style="text-align: center; font-size: 20px;">
+        {% if next_time_slot %}
+            次の利用時間帯: {{ next_time_slot }}
+        {% else %}
+            朝9時からの営業になります<br>
+            <a href="http://miharasa.ec-net.jp/" target="_blank">詳しくはこちら</a>
+            {% endif %}
+            <p style="text-align: center; color: #f60505;">※待ち状況：上記の利用時間帯の30分前に反映されます</p>
+    <table>
+        <thead>
+            <tr>
+                <th>卓球台番号</th>
+                <th>待ち状況</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for waiting in waiting_list %}
+            <tr>
+                <td>卓球台 {{ waiting.table.number }}</td>
+                <td class="{% if waiting.next_is_occupied %}next_occupied{% endif %}">
+                {{ waiting.next_is_occupied|yesno:"待ち,空き" }}
+                </td>
+            </tr>
+            {% endfor %}
+    </table>
+<br>
+<br>
+<br>
+<h1 style="text-align: center;">~ 見取り図 ~</h1>
+<img src="{% static 'images/layout3.png' %}" alt="卓球室のレイアウト">
+
+</body>
+</html>
