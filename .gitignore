@@ -1,0 +1,22 @@
+# macOSシステムファイル
+.DS_Store
+
+# Pythonのキャッシュファイル
+__pycache__/
+*.pyc
+
+# SQLiteデータベース
+db.sqlite3
+
+# 仮想環境
+venv/
+
+# 画像ファイル
+static/images/layout.png
+
+# VSCodeの設定ファイル
+.vscode/
+
+# 特定のPythonファイルやディレクトリ
+*.pyc
+__pycache__/
