@@ -11,11 +11,11 @@
         }
 
         .next_occupied {
-            background-color:cornflowerblue;
+            background-color:rgb(112, 149, 217);
         }
         .blue-header {
-            background-color: blue; /* ヘッダー全体の背景色を青に設定 */
-            color: white; /* テキストの色を白に設定 */
+            background-color:cornflowerblue; /* ヘッダー全体の背景色を青に設定 */
+            color: whitesmoke; /* キストの色を白に設定 */
             padding: 20px; /* 内側の余白を追加 */
             text-align: center; /* テキストを中央揃えにする */
         }
@@ -102,11 +102,13 @@
         <h1>美原総合体育館：卓球室</h1>
     </header>
 
-    <h1 style="text-align: center;">~ 現在：利用状況 ~</h1>
-
     <form method="get" action="." style="text-align: center;">
-        <button type="submit">更新</button>
+        <button type="submit" style="background: none; border: none; padding: 0; cursor: pointer;">
+            <img src="{% static 'images/update1.png' %}" alt="更新" style="width: 30px; height: 30px;">
+        </button>
     </form>
+
+    <h1 style="text-align: center;">~ 現在：利用状況 ~</h1>
 
     <!-- 現在の時間帯を表示 -->
     <p style="text-align: center; font-size: 20px;">
@@ -174,7 +176,7 @@
 <br>
 <br>
 <h1 style="text-align: center;">~ 見取り図 ~</h1>
-<img src="{% static 'images/layout3.png' %}" alt="卓球室のレイアウト">
+<img src="{% static 'images/layout4.png' %}" alt="卓球室のレイアウト">
 
 </body>
 </html>

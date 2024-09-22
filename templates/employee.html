@@ -5,6 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>卓球室管理 従業員側</title>
     <style>
+       /* Flexboxで横並びにする */
+       .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        } 
+
+        /* employee.html のコンテンツ部分 */
+        .employee-content {
+            width: 60%;
+            padding-right: 20px;
+        } 
+
+        /* index.html のコンテンツ部分 */
+        .index-content {
+            width: 75%;
+            padding-left: 20px;
+            border-left: 1px solid #ccc;
+        } 
+        
+
+        .header {
+            background-color:cadetblue; /* ヘッダー全体の背景色を青に設定 */
+            color: white; /* テキストの色を白に設定 */
+            padding: 20px; /* 内側の余白を追加 */
+            text-align: center; /* テキストを中央揃えにする */
+        }
         .status-occupied {
             color: red;
         }
@@ -20,39 +47,101 @@
         .table-number {
             color: black;
         }
+
+        .messages {
+            color: red;
+        }
+
+        /* スマートフォンの画面幅に対応するメディアクエリ */
+        @media (max-width: 768px) { 
+            .container {
+                flex-direction: column; /* 縦並びに変更 */
+            }
+
+            .employee-content, .index-content {
+                width: 100%;
+                padding: 0;
+                border-left: none;
+                margin-bottom: 20px;
+            } 
+        }
+        
+        .header {
+            background-color:cadetblue; /* ヘッダー全体の背景色を青に設定 */
+            color: white; /* テキストの色を白に設定 */
+            padding: 20px; /* 内側の余白を追加 */
+            text-align: center; /* テキストを中央揃えにする */
+        }
+        .status-occupied {
+            color: red;
+        }
+
+        .status-available {
+            color: blue;
+        }
+
+        .status-waiting {
+            color: green;
+        }
+
+        .table-number {
+            color: black;
+        }
+
+        .messages {
+            color: red;
+        }
+
+
     </style>
 </head>
 <body>
-    <h1>従業員側ページ</h1>
-    <h1>卓球室の利用状況管理 </h1>
-    <form method="post">
+    
+    <header class="header">
+        <h1>従業員側ページ</h1>
+    </header>
+    <div class="container">
+        <div class="employee-content">
+    <h1 style="text-align: center;">卓球室の利用状況管理 </h1>
+    <form method="post" >
         {% csrf_token %}
         <input type="hidden" name="form_type" value="current_status_change">
-        <h3 style="text-align: center;">〜　現在の利用状況　〜</h3>
-        <ul>
+        <h3>〜　現在の利用状況　〜</h3>
+    <ul>
+        
             {% for table in tables %}
-            <li class="{% if table.is_occupied %}status-occupied{% else %}status-available{% endif %}">
+        <li>
+            <span class="{% if table.is_occupied %}status-occupied{% else %}status-available{% endif %}">
                 <span class="table-number">卓球台 {{ table.number }}:</span> {{ table.is_occupied|yesno:"利用中,空き" }}
+            </span>
                     <button type="submit" name="table_id" value="{{ table.id }}">
                         {{ table.is_occupied|yesno:"空きに変更,利用中に変更" }}
                     </button>
-                </li>
+        </li>
+        <br>
             {% endfor %}
-        </ul>
+    </ul>
     </form>
 
 <form method="post">
         {% csrf_token %}
         <input type="hidden" name="form_type" value="next_status_change">
-        <h3 style="text-align: center;">〜　次の利用時間帯の予約管理　〜</h3>
+        <h3>〜　待ち状況　〜</h3>
 <ul>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
         {% for table in tables %}
             <li>
                 卓球台 {{ table.number }}: 
                 {% for waiting in waiting_list %}
                     {% if waiting.table.id == table.id %}
-                    <span class="{% if waiting.next_is_occupied %}status-waiting{% else %}status-available{% endif %}"></span>
-                        次の時間帯の状態: {{ waiting.next_is_occupied|yesno:"待ち,空き" }}
+                    <span class="{% if waiting.next_is_occupied %}status-waiting{% else %}status-available{% endif %}">
+                        <span class="table-number">次の時間帯の状態: </span>{{ waiting.next_is_occupied|yesno:"待ち,空き" }}
                     </span>
                         <button type="submit" name="table_id" value="{{ table.id }}">
                             {{ waiting.next_is_occupied|yesno:"空きに変更,待ちに変更" }}
@@ -60,8 +149,19 @@
                     {% endif %}
                 {% endfor %}
             </li>
+        <br>
         {% endfor %}
-    </ul>
-    </form>
+</ul>
+</form>
+
+</div>
+
+<div class="index-content">
+    <h1 style="text-align: center;">利用者画面</h1>
+    {% include 'index.html' %}
+</div>
+</div>
+    
+    
 </body>
 </html>

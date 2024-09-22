@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from datetime import datetime
+from datetime import datetime, timedelta
 from .models import Table, WaitingList
 
 previous_time_slot = None
@@ -51,8 +52,46 @@ def get_current_and_next_time_slot():
 @login_required
 def employeefunc(request):
 
+    current_time_slot, next_time_slot = get_current_and_next_time_slot()
+    print(current_time_slot)
+    print(next_time_slot)
     if request.method == 'POST':
         form_type = request.POST.get('form_type')
+
+        # 現在の時間帯と次の時間帯を取得
+        
+    
+
+        # 現在の時間帯の終了時間を計算
+        now = datetime.now()
+        slot_end_time = None
+        if current_time_slot == None:
+            slot_end_time = now.replace(hour=9, minute=0, second=0, microsecond=0)
+        elif current_time_slot == "9時 ~ 11時":
+            slot_end_time = now.replace(hour=11, minute=0, second=0, microsecond=0)
+        elif current_time_slot == "11時 ~ 13時":
+            slot_end_time = now.replace(hour=13, minute=0, second=0, microsecond=0)
+        elif current_time_slot == "13時 ~ 15時":
+            slot_end_time = now.replace(hour=15, minute=0, second=0, microsecond=0)
+        elif current_time_slot == "15時 ~ 17時":
+            slot_end_time = now.replace(hour=17, minute=0, second=0, microsecond=0)
+        elif current_time_slot == "17時 ~ 19時":
+            slot_end_time = now.replace(hour=19, minute=0, second=0, microsecond=0)
+
+
+        # POST送信が有効かを判定
+        can_post = slot_end_time and now >= (slot_end_time - timedelta(minutes=30))
+
+        if form_type == 'next_status_change' and current_time_slot == "19時 ~ 21時":
+            if now.hour >= 19:
+                messages.error(request, "翌朝8時半以降に機能します")
+                return redirect('employee')
+
+        # 次の利用時間帯の予約
+        if form_type == 'next_status_change':
+            if not can_post:
+                messages.error(request, "30分前以降でないと機能しません")
+                return redirect('employee')  # 30分前でない場合、処理を中断
 
         # 現在の利用状況の変更
         if form_type == 'current_status_change':
@@ -89,7 +128,9 @@ def employeefunc(request):
     
     return render(request, 'employee.html', {
         'tables': tables,
-        'waiting_list': waiting_list
+        'waiting_list': waiting_list,
+        'current_time_slot': current_time_slot,
+        'next_time_slot': next_time_slot
     })
 
 def update_waiting_list(current_time_slot, next_time_slot):
@@ -108,7 +149,7 @@ def indexfunc(request):
     current_time_slot, next_time_slot = get_current_and_next_time_slot()
     print(current_time_slot)
     print(previous_time_slot)
-
+    print(next_time_slot)
     update_waiting_list(current_time_slot, next_time_slot)
 
     # 時間帯が切り替わった時にis_occupiedを空きにリセット
