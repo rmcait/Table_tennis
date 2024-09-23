@@ -33,7 +33,8 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-38xh)1-)cr1!_$5d-weld
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = True
+ALLOWED_HOSTS = ["*"]
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default=[], cast=Csv())
 
@@ -90,12 +91,10 @@ WSGI_APPLICATION = 'tableproject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+default_dburl = "sqlite:///" + str(BASE_DIR / "db.sqlite3")
+
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # }
-"default": config("DATABASE_URL", default=default_dburl, cast=dburl),
+    "default": config("DATABASE_URL", default=default_dburl, cast=dburl),
 
 
 }
