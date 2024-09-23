@@ -14,7 +14,7 @@ from pathlib import Path
 
 import os
 import environ
-from decouple import config
+from decouple import config, Csv
 from dj_database_url import parse as dburl
 
 
@@ -29,12 +29,13 @@ env.read_env(os.path.join(BASE_DIR, ".env"))
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-38xh)1-)cr1!_$5d-weldixq$ham%q&7zi0hr_)3!=zvq4y96='
+SECRET_KEY = config('SECRET_KEY', default='django-insecure-38xh)1-)cr1!_$5d-weldixq$ham%q&7zi0hr_)3!=zvq4y96=')
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default=[], cast=Csv())
 
 
 # Application definition
