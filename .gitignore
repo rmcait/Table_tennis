@@ -11,8 +11,8 @@ db.sqlite3
 # 仮想環境
 venv/
 
-# 画像ファイル
-static/images/layout.png
+.DS_Store
+
 
 # VSCodeの設定ファイル
 .vscode/
