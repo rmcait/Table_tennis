@@ -92,6 +92,14 @@
             color: red;
         }
 
+        .table-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+
 
     </style>
 </head>
@@ -110,13 +118,17 @@
     <ul>
         
             {% for table in tables %}
-        <li>
-            <span class="{% if table.is_occupied %}status-occupied{% else %}status-available{% endif %}">
-                <span class="table-number">卓球台 {{ table.number }}:</span> {{ table.is_occupied|yesno:"利用中,空き" }}
-            </span>
-                    <button type="submit" name="table_id" value="{{ table.id }}">
-                        {{ table.is_occupied|yesno:"空きに変更,利用中に変更" }}
-                    </button>
+        <li class="table-item">
+            <div class="table-info">
+                <span class="{% if table.is_occupied %}status-occupied{% else %}status-available{% endif %}">
+                    <span class="table-number">卓球台 {{ table.number }}:</span> {{ table.is_occupied|yesno:"利用中,空き" }}
+                </span>
+            </div>
+            <div class="table-action">
+                <button type="submit" name="table_id" value="{{ table.id }}">
+                    {{ table.is_occupied|yesno:"空きに変更,利用中に変更" }}
+                </button>
+            </div>
         </li>
         <br>
             {% endfor %}
@@ -136,18 +148,22 @@
     </ul>
 {% endif %}
         {% for table in tables %}
-            <li>
-                卓球台 {{ table.number }}: 
-                {% for waiting in waiting_list %}
-                    {% if waiting.table.id == table.id %}
-                    <span class="{% if waiting.next_is_occupied %}status-waiting{% else %}status-available{% endif %}">
-                        <span class="table-number">次の時間帯の状態: </span>{{ waiting.next_is_occupied|yesno:"待ち,空き" }}
-                    </span>
-                        <button type="submit" name="table_id" value="{{ table.id }}">
-                            {{ waiting.next_is_occupied|yesno:"空きに変更,待ちに変更" }}
-                        </button>
-                    {% endif %}
-                {% endfor %}
+            <li class="table-item">
+                <div class="table-info">
+                    卓球台 {{ table.number }}: 
+                    {% for waiting in waiting_list %}
+                        {% if waiting.table.id == table.id %}
+                        <span class="{% if waiting.next_is_occupied %}status-waiting{% else %}status-available{% endif %}">
+                            <span class="table-number">次の時間帯の状態: </span>{{ waiting.next_is_occupied|yesno:"待ち,空き" }}
+                        </span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="table-action">
+                    <button type="submit" name="table_id" value="{{ table.id }}">
+                        {{ waiting.next_is_occupied|yesno:"空きに変更,待ちに変更" }}
+                    </button>
+                </div>        
             </li>
         <br>
         {% endfor %}
