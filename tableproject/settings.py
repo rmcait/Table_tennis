@@ -34,9 +34,8 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-38xh)1-)cr1!_$5d-weld
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ALLOWED_HOSTS = ["*"]
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default=[], cast=Csv())
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'django-render-amis.onrender.com']
 
 
 # Application definition
