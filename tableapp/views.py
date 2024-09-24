@@ -148,6 +148,8 @@ def indexfunc(request):
     tables = Table.objects.all()  # すべての卓球台の状況を取得
     current_time_slot, next_time_slot = get_current_and_next_time_slot()
     print(current_time_slot)
+    previous = "前回時間帯"
+    print(previous)
     print(previous_time_slot)
     print(next_time_slot)
     update_waiting_list(current_time_slot, next_time_slot)
@@ -167,10 +169,6 @@ def indexfunc(request):
                 waiting_non_list.save()
         
         previous_time_slot = current_time_slot
-    
-        
-    # debug
-    print(previous_time_slot)
     
     
     current_reservations = WaitingList.objects.filter(time_slot=current_time_slot)
