@@ -172,7 +172,7 @@ def indexfunc(request):
     
     
         current_reservations = WaitingList.objects.filter(time_slot=current_time_slot)
-        print(current_reservations)
+        print(f"current_time_slot: {current_time_slot}")
 
         # next_is_occupiedがTrueのものは「利用中」に変更
         for reservation in current_reservations.filter(next_is_occupied=True):
