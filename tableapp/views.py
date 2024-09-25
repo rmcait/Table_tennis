@@ -168,32 +168,34 @@ def indexfunc(request):
                 waiting_non_list.next_is_occupied = False
                 waiting_non_list.save()
         
+        
+    
+    
+        current_reservations = WaitingList.objects.filter(time_slot=current_time_slot)
+        print(current_reservations)
+
+        # next_is_occupiedがTrueのものは「利用中」に変更
+        for reservation in current_reservations.filter(next_is_occupied=True):
+            reservation.table.is_occupied = True  # 利用中に変更
+            reservation.table.save()
+
+            # 次の時間帯に向けてリセット
+            reservation.next_is_occupied = False
+            reservation.time_slot = next_time_slot
+            reservation.save()
+
+        # next_is_occupiedがFalseのものは「空き」にリセット
+        for reservation in current_reservations.filter(next_is_occupied=False):
+            reservation.table.is_occupied = False  # 空きにリセット
+            reservation.table.save()    
+
+            # 次の時間帯に向けてtime_slotを更新
+            reservation.time_slot = next_time_slot
+            reservation.save()
+
+        update_waiting_list(current_time_slot, next_time_slot)
+
         previous_time_slot = current_time_slot
-    
-    
-    current_reservations = WaitingList.objects.filter(time_slot=current_time_slot)
-    print(current_reservations)
-
-    # next_is_occupiedがTrueのものは「利用中」に変更
-    for reservation in current_reservations.filter(next_is_occupied=True):
-        reservation.table.is_occupied = True  # 利用中に変更
-        reservation.table.save()
-
-        # 次の時間帯に向けてリセット
-        reservation.next_is_occupied = False
-        reservation.time_slot = next_time_slot
-        reservation.save()
-
-    # next_is_occupiedがFalseのものは「空き」にリセット
-    for reservation in current_reservations.filter(next_is_occupied=False):
-        reservation.table.is_occupied = False  # 空きにリセット
-        reservation.table.save()    
-
-        # 次の時間帯に向けてtime_slotを更新
-        reservation.time_slot = next_time_slot
-        reservation.save()
-
-    update_waiting_list(current_time_slot, next_time_slot)
 
     # 次の時間帯の予約状況を取得して表示
     waiting_list = WaitingList.objects.all()
