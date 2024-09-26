@@ -152,6 +152,10 @@ def indexfunc(request):
     print(previous)
     print(previous_time_slot)
     print(next_time_slot)
+
+    current_reservations = WaitingList.objects.filter(time_slot=current_time_slot)
+    print(current_reservations)
+    print(f"current_time_slot: {current_time_slot}")
     
 
     # 時間帯が切り替わった時にis_occupiedを空きにリセット
@@ -159,6 +163,8 @@ def indexfunc(request):
         for table in tables:
             table.is_occupied = False
             table.save()
+        
+        previous_time_slot = current_time_slot
     
     # 21時以降になったら待ち状況のリセット
         if  current_time_slot ==  "営業時間前" and previous_time_slot == "19時 ~ 21時" or previous_time_slot == None:
@@ -168,11 +174,6 @@ def indexfunc(request):
                 waiting_non_list.next_is_occupied = False
                 waiting_non_list.save()
         
-        
-    
-    
-        current_reservations = WaitingList.objects.filter(time_slot=current_time_slot)
-        print(f"current_time_slot: {current_time_slot}")
 
         # next_is_occupiedがTrueのものは「利用中」に変更
         for reservation in current_reservations.filter(next_is_occupied=True):
@@ -195,7 +196,6 @@ def indexfunc(request):
 
         update_waiting_list(current_time_slot, next_time_slot)
 
-        previous_time_slot = current_time_slot
 
     # 次の時間帯の予約状況を取得して表示
     waiting_list = WaitingList.objects.all()
