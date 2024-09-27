@@ -65,7 +65,7 @@ def employeefunc(request):
         # 現在の時間帯の終了時間を計算
         now = datetime.now()
         slot_end_time = None
-        if current_time_slot == None:
+        if current_time_slot == "営業時間前":
             slot_end_time = now.replace(hour=9, minute=0, second=0, microsecond=0)
         elif current_time_slot == "9時 ~ 11時":
             slot_end_time = now.replace(hour=11, minute=0, second=0, microsecond=0)
@@ -173,6 +173,7 @@ def indexfunc(request):
     
         current_reservations = WaitingList.objects.filter(time_slot=current_time_slot)
         print(f"current_time_slot: {current_time_slot}")
+        print(current_reservations)
 
         # next_is_occupiedがTrueのものは「利用中」に変更
         for reservation in current_reservations.filter(next_is_occupied=True):
@@ -193,7 +194,7 @@ def indexfunc(request):
             reservation.time_slot = next_time_slot
             reservation.save()
 
-        update_waiting_list(current_time_slot, next_time_slot)
+        # update_waiting_list(current_time_slot, next_time_slot)
 
         previous_time_slot = current_time_slot
 
