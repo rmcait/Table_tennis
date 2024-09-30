@@ -147,11 +147,9 @@ def indexfunc(request):
 
     tables = Table.objects.all()  # すべての卓球台の状況を取得
     current_time_slot, next_time_slot = get_current_and_next_time_slot()
-    print(current_time_slot)
-    previous = "前回時間帯"
-    print(previous)
-    print(previous_time_slot)
-    print(next_time_slot)
+    print(f"Current time slot: {current_time_slot}")
+    print(f"Previous time slot: {previous_time_slot}")
+    print(f"Next time slot: {next_time_slot}")
     
 
     # 時間帯が切り替わった時にis_occupiedを空きにリセット
@@ -167,16 +165,17 @@ def indexfunc(request):
                 waiting_non_list.time_slot = next_time_slot
                 waiting_non_list.next_is_occupied = False
                 waiting_non_list.save()
-        
-        
-    
-    
-        current_reservations = WaitingList.objects.filter(time_slot=current_time_slot)
-        print(f"current_time_slot: {current_time_slot}")
-        print(current_reservations)
 
+        # 現在の時間帯の予約を取得
+        current_reservations = WaitingList.objects.filter(time_slot=current_time_slot)
+        print(f"Reservations in current time slot: {current_reservations}")
+
+        # next_is_occupiedがTrueのものを「利用中」に変更
+        reservations_to_activate = current_reservations.filter(next_is_occupied=True)
+        print(f"Reservations to activate: {reservations_to_activate}")
+        
         # next_is_occupiedがTrueのものは「利用中」に変更
-        for reservation in current_reservations.filter(next_is_occupied=True):
+        for reservation in reservations_to_activate:
             reservation.table.is_occupied = True  # 利用中に変更
             reservation.table.save()
 
