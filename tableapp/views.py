@@ -3,6 +3,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from datetime import datetime, timedelta
 from .models import Table, WaitingList
+# transactionのuimport
+from django.db import transaction
 
 previous_time_slot = None
 
@@ -176,22 +178,42 @@ def indexfunc(request):
         
         # next_is_occupiedがTrueのものは「利用中」に変更
         for reservation in reservations_to_activate:
-            reservation.table.is_occupied = True  # 利用中に変更
-            reservation.table.save()
+            # print(f"Activating reservation for table {reservation.table.id}, setting to occupied")
+            # reservation.table.is_occupied = True  # 利用中に変更
+            # reservation.table.save()
 
-            # 次の時間帯に向けてリセット
+            # # 次の時間帯に向けてリセット
+            # reservation.next_is_occupied = False
+            # reservation.time_slot = next_time_slot
+            # reservation.save()
+
+            print(f"Before setting occupied: Table {reservation.table.id}, is_occupied={reservation.table.is_occupied}")
+    
+        try:
+            reservation.table.is_occupied = True
+            print(f"After setting occupied: Table {reservation.table.id}, is_occupied={reservation.table.is_occupied}")
+
+            reservation.table.save()
+            print(f"Table {reservation.table.id} save successful")
+
             reservation.next_is_occupied = False
             reservation.time_slot = next_time_slot
             reservation.save()
+            print(f"After reset: next_is_occupied = {reservation.next_is_occupied}, time_slot = {reservation.time_slot}")
+
+        except Exception as e:
+            print(f"Error during reservation activation: {e}")
 
         # next_is_occupiedがFalseのものは「空き」にリセット
         for reservation in current_reservations.filter(next_is_occupied=False):
+            print(f"Resetting reservation for table {reservation.table.id}, setting to available")
             reservation.table.is_occupied = False  # 空きにリセット
             reservation.table.save()    
 
             # 次の時間帯に向けてtime_slotを更新
             reservation.time_slot = next_time_slot
             reservation.save()
+            print(f"After reset: next_is_occupied = {reservation.next_is_occupied}, time_slot = {reservation.time_slot}")
 
         # update_waiting_list(current_time_slot, next_time_slot)
 
