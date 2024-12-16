@@ -156,26 +156,36 @@
         {% endfor %}
     </ul>
 {% endif %}
-        {% for table in tables %}
-            <li class="table-item">
-                <div class="table-info">
-                    卓球台 {{ table.number }}: 
-                    {% for waiting in waiting_list %}
-                        {% if waiting.table.id == table.id %}
-                        <span class="{% if waiting.next_is_occupied %}status-waiting{% else %}status-available{% endif %}">
-                            <span class="table-number">次の時間帯の状態: </span>{{ waiting.next_is_occupied|yesno:"待ち,空き" }}
-                        </span>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-                <div class="table-action">
-                    <button type="submit" name="table_id" value="{{ table.id }}">
-                        {{ waiting.next_is_occupied|yesno:"空きに変更,待ちに変更" }}
-                    </button>
-                </div>        
-            </li>
-        <br>
-        {% endfor %}
+{% for table in tables %}
+<li class="table-item">
+    <div class="table-info">
+        卓球台 {{ table.number }}: 
+        {% with waiting_list|dictsort:"table.id"|dict_key:table.id as waiting %}
+            {% if waiting %}
+            <span class="{% if waiting.next_is_occupied %}status-waiting{% else %}status-available{% endif %}">
+                <span class="table-number">次の時間帯の状態: </span>
+                {{ waiting.next_is_occupied|yesno:"待ち,空き" }}
+            </span>
+            {% else %}
+            <span class="status-available">状態情報なし</span>
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <div class="table-action">
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" name="table_id" value="{{ table.id }}">
+                {% if waiting %}
+                    {{ waiting.next_is_occupied|yesno:"空きに変更,待ちに変更" }}
+                {% else %}
+                    空きに変更
+                {% endif %}
+            </button>
+        </form>
+    </div>        
+</li>
+{% endfor %}
 </ul>
 </form>
 
