@@ -127,18 +127,21 @@
     <ul>
         
             {% for table in tables %}
-        <li class="table-item">
-            <div class="table-info">
-                <span class="{% if table.is_occupied %}status-occupied{% else %}status-available{% endif %}">
-                    <span class="table-number">卓球台 {{ table.number }}:</span> {{ table.is_occupied|yesno:"利用中,空き" }}
-                </span>
-            </div>
-            <div class="table-action">
-                <button type="submit" name="table_id" value="{{ table.id }}">
-                    {{ table.is_occupied|yesno:"空きに変更,利用中に変更" }}
-                </button>
-            </div>
-        </li>
+            <li class="table-item">
+                <div class="table-info">
+                    <span class="{% if table.is_occupied %}status-occupied{% else %}status-available{% endif %}">
+                        <span class="table-number">卓球台 {{ table.number }}:</span> {{ table.is_occupied|yesno:"利用中,空き" }}
+                    </span>
+                </div>
+                <div class="table-action">
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" name="table_id" value="{{ table.id }}">
+                            {{ table.is_occupied|yesno:"空きに変更,利用中に変更" }}
+                        </button>
+                    </form>
+                </div>
+            </li>
         <br>
             {% endfor %}
     </ul>
