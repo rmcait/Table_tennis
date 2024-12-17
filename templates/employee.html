@@ -162,6 +162,9 @@
                     卓球台 {{ table.number }}: 
                     {% for waiting in waiting_list %}
                         {% if waiting.table.id == table.id %}
+                        <!-- デバッグ用に値を表示 -->
+                        <p>waiting.table.id: {{ waiting.table.id }}</p>
+                        <p>table.id: {{ table.id }}</p>
                         <span class="{% if waiting.next_is_occupied %}status-waiting{% else %}status-available{% endif %}">
                             <span class="table-number">次の時間帯の状態: </span>{{ waiting.next_is_occupied|yesno:"待ち,空き" }}
                         </span>
