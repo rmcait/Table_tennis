@@ -147,7 +147,7 @@ def indexfunc(request):
 
     global previous_time_slot
 
-    tables = Table.objects.all()
+    tables = Table.objects.all().order_by('id')
     current_time_slot, next_time_slot = get_current_and_next_time_slot()
     print(f"Current time slot: {current_time_slot}")
     print(f"Previous time slot: {previous_time_slot}")
