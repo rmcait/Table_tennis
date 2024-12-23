@@ -219,6 +219,4 @@ def indexfunc(request):
         'next_time_slot': next_time_slot,
         'waiting_list': waiting_list
     })
-    
-    
 
